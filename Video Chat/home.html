@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>sample app</title>
+    </head>
+    <body>
+        <script>
+            var vidyoConnector;
+            function onVidyoClientLoaded(status) {
+                console.log("vidyoClient load state "+ status.state);
+                if (status.state == "READY") {
+                    VC.CreateVidyoConnector({
+                        viewId: "rendered",
+                        viewStyle:"VIDYO_CONNECTORVIEWSTYLE_Default",
+                        remoteParticipants:16,
+                        logFileFilter:"error",
+                        logFileName:"",
+                        userData:""
+                    }).then(function (vc) {
+                        console.log("crate success");
+                        vidyoConnector = vc;
+                    }).catch(function(err){
+                        console.error(err);
+                    })
+                }
+            }
+
+            function joincall(){
+                vidyoConnector.Connect({
+                    host:"prod.vidyo.io",
+                    token:"",
+                    displayName:"umang",
+                    resourceId:"demo",
+                    onSuccess: function(){
+                        console.log("success");
+                    },
+                    onFailure: function(reason){
+                        console.log("fail")
+                    },
+                    onDisconnected: function(reason){
+                        console.log("dis");
+                    }
+                })
+            }
+        </script>
+        <script src="https://static.vidyo.io/latest/javascript/VidyoClient/VidyoClient.js?onload=onVidyoClientLoaded"></script>
+    <button onclick="joincall()">connect</button>
+        <div id="rendered">
+
+    </div>
+    </body>
+</html>

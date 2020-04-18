@@ -91,14 +91,15 @@
           if (!DOMvideo) return;
           if (isDetected){
             // DOMvideo.play();
-            toggle_canvasContainer(false);
-            ct = DOMvideo.currentTime
-            attentive = DOMvideo.currentTime - non_atten;
-            total += attentive;
-          } else {
             ct = DOMvideo.currentTime
             non_atten = DOMvideo.currentTime
+            toggle_canvasContainer(false);
+            
+          } else {
             // DOMvideo.pause();
+            attentive = DOMvideo.currentTime - non_atten;
+            total += attentive;
+            console.log(total);
             toggle_canvasContainer(true);
           }
         },
@@ -201,7 +202,7 @@
         const DOMvideo = document.getElementById('jeeVideo');
         DOMvideo.onended = function() {
           const att = (DOMvideo.duration - (total+ 5)).toFixed(1);
-          const result = "You were attentive for "+ att+ " seconds";
+          const result = "You were attentive for "+ total.toFixed(1)+ " seconds";
           alert(result);
         };
       </script>
