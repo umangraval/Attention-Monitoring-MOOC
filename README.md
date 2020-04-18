@@ -1,9 +1,9 @@
-# Attention-Monitoring-MOOC
+# Video Chat
 
-Open index.html on Live Server
+[Slides](http://slides.com/basscord/webrtc-video-streaming/) | [Demo](https://video-chat.basscord.co/your-clever-room-name)
 
-Enable glance tracking 
+Simple app that allows peer to peer video chats.
 
-Then play the video
+Create a room by going to [https://video-chat.basscord.co/](https://video-chat.basscord.co/)[room-name-goes-here]
 
-when video is over it will display total duration you were attentive
+Send that url to a friend and video chatting will commence.
