@@ -31,9 +31,9 @@
     let username = '';
     let newData = [];
     let connectedUsers = []; 
-    let yvalue = []; 
-    var dps1 = [];
-    var dps2 = []; // dataPoints
+    let yvalue;
+    let val = []; 
+    var uiii = {};
 
 
     function toggle_canvasContainer(isShow){
@@ -42,11 +42,15 @@
       DOMcanvasContainer.style.opacity = (isShow) ? '1' : '0';
     };
 
-function myname() {
-const usr = document.getElementById("alli").value;
-username = usr;
-document.getElementById("urr").innerHTML = usr;
-};
+  function myname() {
+    const usr = document.getElementById("alli").value;
+    username = usr;
+    document.getElementById("urr").innerHTML = 'Username: '+usr;
+    var textfield = document.getElementById("registerfield");
+    var charset = document.getElementById("chartContainer");
+    textfield.remove();
+    charset.remove();
+  };
 
 
     function toggle_glanceTracking(event){ //the user clic on the button
@@ -156,15 +160,12 @@ document.getElementById("urr").innerHTML = usr;
           if (document.getElementsByClassName("teacher")[0].innerHTML == "<p>This is admin</p>"){
             if (!connectedUsers.includes(msg.username)) {
               connectedUsers.push(msg.username);
-              yvalue.push(msg.yvalue);
-              // newData.push({type: "line", label: msg.username, dataPoints: dps})
+              val.push(msg.yvalue);
+              uiii[msg.username] = 0;
+              newData.push({'type': "spline", 'showInLegend': true, 'name': msg.username, 'dataPoints': []})
             } 
-            if(msg.username == 'umang'){
-              yvalue[0] = msg.yvalue;
-            } else{
-              yvalue[1] = msg.yvalue;
+            uiii[msg.username] = msg.yvalue;
             }
-          }
         });
       });
    </script>
@@ -240,22 +241,15 @@ document.getElementById("urr").innerHTML = usr;
       function showStats() {
       
       
-        
+     console.log(newData);   
 var chart = new CanvasJS.Chart("chartContainer", {
 	title :{
-		text: "Dynamic Data"
+		text: "Real time Attention Graph (1 = attentive)"
 	},
 	axisY: {
 		includeZero: false
 	},      
-	data: [{
-    type: 'line',
-    dataPoints: dps1
-  },
-  {
-    type: 'line',
-    dataPoints: dps2
-  }]
+	data: newData
 });
 
 var xVal = 0;
@@ -268,23 +262,21 @@ var updateChart = function (count) {
 	count = count || 1;
 
 	for (var j = 0; j < count; j++) {
-		dps1.push({
+		for(var t =0; t < newData.length;t++){
+
+    newData[t]['dataPoints'].push({
 			x: xVal,
-			y: yvalue[0]
-    });
-    dps2.push({
-			x: xVal,
-			y: yvalue[1]
-		});
+			y: uiii[newData[t]['name']]
+		  });
+    };
+ 
 		xVal++;
 	}
-
-	if (dps1.length > dataLength) {
-		dps1.shift();
-	}
-	if (dps2.length > dataLength) {
-		dps2.shift();
-	}
+  for(var t =0; t < newData.length;t++){
+    if (newData[t]['dataPoints'].length > dataLength) {
+      newData[t]['dataPoints'].shift();
+    }
+  }
 
 	chart.render();
 };
@@ -304,8 +296,8 @@ setInterval(function(){updateChart()}, updateInterval);
     <div id="chartContainer" style="height: 370px; width:100%;"> <button onclick="showStats()">Show</button></div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-    <input type="text" id="alli"><button onclick="myname()">Register</button>
-    <p id="urr">username</p>
+    <div id="registerfield"><input type="text" id="alli"><button onclick="myname()">Register</button></div>
+    <p id="urr">Username: </p>
     
     <p id="messages"></p>
    <div class="teacher"></div>
