@@ -1,181 +1,198 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="content-language" content="en-EN" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
     <title>MOOC DEMO</title>
-    
+
     <!-- WE INCLUDE THE MAIN SCRIPT -->
     <script src="https://appstatic.jeeliz.com/glanceTracker/jeelizGlanceTracker.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-  
-
 
     <script>
+      "use strict";
+      const _states = {
+        idle: 0,
+        loading: 1,
+        enabled: 2,
+        disabled: 3,
+      };
+      let attentive = 0;
+      let non_atten = 0;
+      let globalId;
+      let total = 0;
+      let ct;
+      let _state = _states.idle;
+      let username = "";
+      let newData = [];
+      let connectedUsers = [];
+      let yvalue;
+      let val = [];
+      var uiii = {};
 
-    "use strict"
-    const _states={
-      idle: 0,
-      loading: 1,
-      enabled: 2,
-      disabled: 3
-    };
-    let attentive = 0;
-    let non_atten = 0;
-    let globalId;
-    let total = 0;
-    let ct;
-    let _state = _states.idle;
-    let username = '';
-    let newData = [];
-    let connectedUsers = []; 
-    let yvalue;
-    let val = []; 
-    var uiii = {};
-
-
-    function toggle_canvasContainer(isShow){
-      const DOMcanvasContainer = document.getElementById('glanceTrackerCanvasContainer');
-      if (!DOMcanvasContainer) return;
-      DOMcanvasContainer.style.opacity = (isShow) ? '1' : '0';
-    };
-
-  function myname() {
-    const usr = document.getElementById("alli").value;
-    username = usr;
-    document.getElementById("urr").innerHTML = 'Username: '+usr;
-    var textfield = document.getElementById("registerfield");
-    var charset = document.getElementById("chartContainer");
-    textfield.remove();
-    charset.remove();
-  };
-
-
-    function toggle_glanceTracking(event){ //the user clic on the button
-      switch(_state){
-        case _states.idle:
-          init_glanceTracking();
-          break;
-
-        case _states.loading:
-          break;
-
-        case _states.enabled:
-          GLANCETRACKERAPI.toggle_pause(true, true);
-          toggle_canvasContainer(false);
-          _state = _states.disabled;
-          break;
-
-        case _states.disabled:
-          GLANCETRACKERAPI.toggle_pause(false, true);
-          toggle_canvasContainer(true);
-          _state = _states.enabled;
-          break;
+      function toggle_canvasContainer(isShow) {
+        const DOMcanvasContainer = document.getElementById(
+          "glanceTrackerCanvasContainer"
+        );
+        if (!DOMcanvasContainer) return;
+        DOMcanvasContainer.style.opacity = isShow ? "1" : "0";
       }
-      update_button();
-    }; //end toggle_glanceTracking()
 
-    function myFunction() {
-      globalId = document.getElementById("thisi").childNodes[0].id;
-    }
-    
-    function update_button(){
-      const  DOMbutton = document.getElementById('toggleGlanceTracking');
-      let buttonText = 'undefined';
-      
-      switch(_state){
-        case _states.idle:
-        case _states.disabled:
-          buttonText = 'Enable glance tracking';
-          DOMbutton.style.backgroundColor = 'rgb(12, 127, 194)';
-          break;
-
-        case _states.loading:
-          buttonText = 'LOADING...';
-          break;
-
-        case _states.enabled:
-          buttonText = 'Disable glance tracking';
-          DOMbutton.style.backgroundColor = 'indianred';
-          break;
+      function myname() {
+        const usr = document.getElementById("alli").value;
+        username = usr;
+        document.getElementById("urr").innerHTML = "Username: " + usr;
+        var textfield = document.getElementById("registerfield");
+        // var charset = document.getElementById("chartContainer");
+        textfield.remove();
+        charset.remove();
       }
-      DOMbutton.innerHTML = buttonText;
-    }; //end update_button()
 
-    function calAttention(duration, noat){
-      return duration - noat;
-    }
-    function init_glanceTracking(){
-      _state = _states.loading;
-      GLANCETRACKERAPI.init({
-        callbackTrack: function(isDetected){
-          // console.log('DETECTION changed ! isDetected = ', isDetected);
-          myFunction();
-          const DOMvideo = document.getElementById(globalId);
-          if (!DOMvideo) return;
-          if (isDetected){
-            // DOMvideo.play();
-            yvalue = 1;
-            ct = DOMvideo.currentTime
-            non_atten = DOMvideo.currentTime
+      function toggle_glanceTracking(event) {
+        //the user clic on the button
+        switch (_state) {
+          case _states.idle:
+            init_glanceTracking();
+            break;
+
+          case _states.loading:
+            break;
+
+          case _states.enabled:
+            GLANCETRACKERAPI.toggle_pause(true, true);
             toggle_canvasContainer(false);
-            
-          } else {
-            // DOMvideo.pause();
-            attentive = DOMvideo.currentTime - non_atten;
-            total += attentive;
-            yvalue = 0;
-            // console.log(total);
-            toggle_canvasContainer(true);
-          }
-        },
-        callbackReady: function(error){
-          if (error){
-            alert('AN ERROR HAPPENS :( CODE ='+error);
-            return;
-          }
-          console.log('GLANCETRACKERAPI is READY YEAH !');
-          _state = _states.enabled;
-          update_button();
-          toggle_canvasContainer(true);
-        },
-       
-        isDisplayVideo: true,
-        canvasId: 'glanceTrackerCanvas',
-        NNCpath: 'https://appstatic.jeeliz.com/glanceTracker/' //where is NNC.json ?
-      }); //end GLANCETRACKERAPI.init call
-    }; //end init()
+            _state = _states.disabled;
+            break;
 
+          case _states.disabled:
+            GLANCETRACKERAPI.toggle_pause(false, true);
+            toggle_canvasContainer(true);
+            _state = _states.enabled;
+            break;
+        }
+        update_button();
+      } //end toggle_glanceTracking()
+
+      function myFunction() {
+        globalId = document.getElementById("thisi").childNodes[0].id;
+      }
+
+      function update_button() {
+        const DOMbutton = document.getElementById("toggleGlanceTracking");
+        let buttonText = "undefined";
+
+        switch (_state) {
+          case _states.idle:
+          case _states.disabled:
+            buttonText = "Enable glance tracking";
+            DOMbutton.style.backgroundColor = "rgb(12, 127, 194)";
+            break;
+
+          case _states.loading:
+            buttonText = "LOADING...";
+            break;
+
+          case _states.enabled:
+            buttonText = "Disable glance tracking";
+            DOMbutton.style.backgroundColor = "indianred";
+            break;
+        }
+        DOMbutton.innerHTML = buttonText;
+      } //end update_button()
+
+      function calAttention(duration, noat) {
+        return duration - noat;
+      }
+      function init_glanceTracking() {
+        _state = _states.loading;
+        GLANCETRACKERAPI.init({
+          callbackTrack: function(isDetected) {
+            // console.log('DETECTION changed ! isDetected = ', isDetected);
+            myFunction();
+            const DOMvideo = document.getElementById(globalId);
+            if (!DOMvideo) return;
+            if (isDetected) {
+              // DOMvideo.play();
+              yvalue = 1;
+              ct = DOMvideo.currentTime;
+              non_atten = DOMvideo.currentTime;
+              toggle_canvasContainer(false);
+            } else {
+              // DOMvideo.pause();
+              attentive = DOMvideo.currentTime - non_atten;
+              total += attentive;
+              yvalue = 0;
+              // console.log(total);
+              toggle_canvasContainer(true);
+            }
+          },
+          callbackReady: function(error) {
+            if (error) {
+              alert("AN ERROR HAPPENS :( CODE =" + error);
+              return;
+            }
+            console.log("GLANCETRACKERAPI is READY YEAH !");
+            _state = _states.enabled;
+            update_button();
+            toggle_canvasContainer(true);
+          },
+
+          isDisplayVideo: true,
+          canvasId: "glanceTrackerCanvas",
+          NNCpath: "https://appstatic.jeeliz.com/glanceTracker/", //where is NNC.json ?
+        }); //end GLANCETRACKERAPI.init call
+      } //end init()
     </script>
-   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-   <script>
-     $(function () {
-       var socket = io();
-         setInterval(function() {
-         socket.emit('chat message', {'yvalue': yvalue, 'username':username});
-        }, 2000);  
-        socket.on('chat message', function(msg){
-          if (document.getElementsByClassName("teacher")[0].innerHTML == "<p>This is admin</p>"){
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(function() {
+        var socket = io();
+        setInterval(function() {
+          socket.emit("chat message", { yvalue: yvalue, username: username });
+        }, 2000);
+        socket.on("chat message", function(msg) {
+          if (
+            document.getElementsByClassName("teacher")[0].innerHTML ==
+            "<p>This is admin</p>"
+          ) {
             if (!connectedUsers.includes(msg.username)) {
               connectedUsers.push(msg.username);
               val.push(msg.yvalue);
               uiii[msg.username] = 0;
-              newData.push({'type': "spline", 'showInLegend': true, 'name': msg.username, 'dataPoints': []})
-            } 
-            uiii[msg.username] = msg.yvalue;
+              newData.push({
+                type: "spline",
+                showInLegend: true,
+                name: msg.username,
+                dataPoints: [],
+              });
             }
+            uiii[msg.username] = msg.yvalue;
+          }
         });
       });
-   </script>
+    </script>
 
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-    <style type='text/css'>
-      a {color: #7af; text-decoration: none; font-weight: bold}
-      a:hover {color: white;}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="//fonts.googleapis.com/css?family=Open+Sans"
+    />
+    <style type="text/css">
+      a {
+        color: #7af;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      a:hover {
+        color: white;
+      }
       body {
-        background-color: #FAFAFA;
+        background-color: #fafafa;
         margin: 0px;
         text-align: center;
         font-family: Helvetica Neu, Arial, sans-serif;
@@ -214,15 +231,15 @@
         text-align: center;
         border: 1px solid white;
         z-index: 10;
-        position: fixed; 
+        position: fixed;
         bottom: 0px;
         right: 0px;
         opacity: 0;
         transition-duration: 1000ms;
       }
 
-      #glanceTrackerCanvas {  
-        max-width: 25vmin; 
+      #glanceTrackerCanvas {
+        max-width: 25vmin;
       }
 
       #jeeVideo {
@@ -235,77 +252,81 @@
         display: inline-block;
         color: #444;
       }
-      
     </style>
     <script>
       function showStats() {
-      
-      
-     console.log(newData);   
-var chart = new CanvasJS.Chart("chartContainer", {
-	title :{
-		text: "Real time Attention Graph (1 = attentive)"
-	},
-	axisY: {
-		includeZero: false
-	},      
-	data: newData
-});
+        console.log(newData);
+        var chart = new CanvasJS.Chart("chartContainer", {
+          title: {
+            text: "Real time Attention Graph (1 = attentive)",
+          },
+          axisY: {
+            includeZero: false,
+          },
+          data: newData,
+        });
 
-var xVal = 0;
-var yVal = 100; 
-var updateInterval = 2000;
-var dataLength = 20; // number of dataPoints visible at any point
+        var xVal = 0;
+        var yVal = 100;
+        var updateInterval = 2000;
+        var dataLength = 20; // number of dataPoints visible at any point
 
-var updateChart = function (count) {
+        var updateChart = function(count) {
+          count = count || 1;
 
-	count = count || 1;
+          for (var j = 0; j < count; j++) {
+            for (var t = 0; t < newData.length; t++) {
+              newData[t]["dataPoints"].push({
+                x: xVal,
+                y: uiii[newData[t]["name"]],
+              });
+            }
 
-	for (var j = 0; j < count; j++) {
-		for(var t =0; t < newData.length;t++){
+            xVal++;
+          }
+          for (var t = 0; t < newData.length; t++) {
+            if (newData[t]["dataPoints"].length > dataLength) {
+              newData[t]["dataPoints"].shift();
+            }
+          }
 
-    newData[t]['dataPoints'].push({
-			x: xVal,
-			y: uiii[newData[t]['name']]
-		  });
-    };
- 
-		xVal++;
-	}
-  for(var t =0; t < newData.length;t++){
-    if (newData[t]['dataPoints'].length > dataLength) {
-      newData[t]['dataPoints'].shift();
-    }
-  }
+          chart.render();
+        };
 
-	chart.render();
-};
-
-updateChart(dataLength);
-setInterval(function(){updateChart()}, updateInterval);
-
+        updateChart(dataLength);
+        setInterval(function() {
+          updateChart();
+        }, updateInterval);
       }
-      </script>
+    </script>
   </head>
 
-
-  <body onload='update_button()' style='color: white'>
-
+  <body onload="update_button()" style="color: white">
     <h1 id="id01">Attention Monitoring demo</h1>
-   
-    <div id="chartContainer" style="height: 370px; width:100%;"> <button onclick="showStats()">Show</button></div>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-    <div id="registerfield"><input type="text" id="alli"><button onclick="myname()">Register</button></div>
-    <p id="urr">Username: </p>
-    
+    <div id="chartContainer" style="height: 370px; width:100%;">
+      <button onclick="showStats()">Show</button>
+    </div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <div id="registerfield">
+      <input type="text" id="alli" /><button onclick="myname()">
+        Register
+      </button>
+    </div>
+    <p id="urr">Username:</p>
+
     <p id="messages"></p>
-   <div class="teacher"></div>
-    <button onclick='toggle_glanceTracking(event)' id='toggleGlanceTracking'></button><br/>
-    <video class="localVideo" playsinline autoplay muted></video>  
-      <div class="remoteVideos" id="thisi"></div>
-      <script src='/socket.io/socket.io.js'></script>
-      <script src="/js/video.js"></script>
+    <div class="teacher"></div>
+    <button
+      onclick="toggle_glanceTracking(event)"
+      id="toggleGlanceTracking"
+    ></button
+    ><br />
+    <video class="localVideo" playsinline autoplay muted></video>
+    <div class="remoteVideos" id="thisi"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/video.js"></script>
     <!-- <div id="result">
       <script>
         const DOMvideo = document.getElementById('jeeVideo');
@@ -316,11 +337,9 @@ setInterval(function(){updateChart()}, updateInterval);
         };
       </script>
     </div> -->
-    <div id='glanceTrackerCanvasContainer'>
-      &nbsp;Tracking your glance ...<br/>
-      <canvas id='glanceTrackerCanvas'></canvas>
+    <div id="glanceTrackerCanvasContainer">
+      &nbsp;Tracking your glance ...<br />
+      <canvas id="glanceTrackerCanvas"></canvas>
     </div>
-
   </body>
 </html>
-

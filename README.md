@@ -11,3 +11,10 @@
 4. Click `Enable Tracking` (not for admin)
 
 5. For admin user click show to `see` real time tracking of all your connected user
+
+## Patches left
+
+ [ ] UI Fixes
+ 
+ [ ] Socket deployment
+
