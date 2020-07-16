@@ -7,7 +7,6 @@ html {
 	object-fit: cover;
 }
 .localVideo {
-	width: 20%;
 	position: absolute;
 	z-index: 2;
 	bottom: 10px;
@@ -15,8 +14,6 @@ html {
 	display: block;
 }
 .remoteVideos {
-	width: 100%;
-	height: 100%;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -25,13 +22,11 @@ html {
 	flex-wrap: nowrap;
 	justify-content: flex-start;
 	align-items: stretch;
-	align-content: stretch;
+	align-content: space-between;
 }
-.remoteVideos video {
-	flex-grow: 1;
-	flex-shrink: 1;
-	min-width: 0px;
-	min-height: 0px;
+.remoteVideos > video {
+	width: 200px;
+	height: 200px;
 }
 body {
   background-color: black;

@@ -121,6 +121,7 @@ var admin = 0;
     remoteVideo.setAttribute("id", globalId);
     remoteVideo.setAttribute("playsinline", "true");
     remoteVideo.setAttribute("autoplay", "true");
+    remoteVideo.setAttribute("width", "100px");
     remoteVideos.appendChild(remoteVideo);
     if (remoteVideos.querySelectorAll("video").length === 1) {
       remoteVideos.setAttribute("class", "one remoteVideos");

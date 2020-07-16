@@ -16,5 +16,4 @@
 
  [ ] UI Fixes
  
- [ ] Socket deployment
 

@@ -13,7 +13,6 @@
     <!-- WE INCLUDE THE MAIN SCRIPT -->
     <script src="https://appstatic.jeeliz.com/glanceTracker/jeelizGlanceTracker.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-
     <script>
       "use strict";
       const _states = {
@@ -220,8 +219,7 @@
       }
       p {
         font-weight: normal;
-        padding: 20px;
-        font-size: 22pt;
+        font-size: 10pt;
         color: red;
         font-family: monospace;
       }
@@ -268,7 +266,7 @@
 
         var xVal = 0;
         var yVal = 100;
-        var updateInterval = 2000;
+        var updateInterval = 1000;
         var dataLength = 20; // number of dataPoints visible at any point
 
         var updateChart = function(count) {
@@ -304,16 +302,19 @@
   <body onload="update_button()" style="color: white">
     <h1 id="id01">Attention Monitoring demo</h1>
 
-    <div id="chartContainer" style="height: 370px; width:100%;">
+    <div id="chartContainer" style="height: 250px; width:100%;">
       <button onclick="showStats()">Show</button>
     </div>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
+     
+    <video class="localVideo" playsinline autoplay muted width="100%" height="400px"></video>
+    <div class="remoteVideos" id="thisi"></div>
+       
     <div id="registerfield">
       <input type="text" id="alli" /><button onclick="myname()">
         Register
       </button>
-    </div>
+    </div>      
     <p id="urr">Username:</p>
 
     <p id="messages"></p>
@@ -323,8 +324,6 @@
       id="toggleGlanceTracking"
     ></button
     ><br />
-    <video class="localVideo" playsinline autoplay muted></video>
-    <div class="remoteVideos" id="thisi"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/video.js"></script>
     <!-- <div id="result">
