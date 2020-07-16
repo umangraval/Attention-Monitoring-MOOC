@@ -1,5 +1,11 @@
 # Attention Monitor Video Chat
 
+## Demo
+
+Visit [http://covid19-country-statistics.herokuapp.com/1234gyt](http://covid19-country-statistics.herokuapp.com/1234gyt)
+
+You can also replace roomid of your choice at last and sent the full url to other person to monitor him.
+
 ## Steps
 
 1. `npm start` And go to http://localhost:3000/[roomid]
@@ -15,5 +21,7 @@
 ## Patches left
 
  [ ] UI Fixes
+ 
+ [ ] Audio integration
  
 
