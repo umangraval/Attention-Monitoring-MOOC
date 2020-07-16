@@ -2,7 +2,7 @@ const credentials = require('./credentials');
 const express = require('express');
 const app = express();
 let server;
-let port;
+let port = process.env.PORT || 5000;
 if (credentials.key && credentials.cert) {
   const https = require('https');
   server = https.createServer(credentials, app);
